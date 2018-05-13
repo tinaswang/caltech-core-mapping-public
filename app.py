@@ -22,7 +22,7 @@ from collections import Counter as C
 server = flask.Flask(__name__)
 server.secret_key = os.environ.get('secret_key', str(randint(0, 1000000)))
 app = dash.Dash(__name__, server=server)
-app.title = "Caltech Core Mapping"
+# app.title = "Caltech Core Mapping"
 # app = dash.Dash(__name__)
 # server = app.server
 
