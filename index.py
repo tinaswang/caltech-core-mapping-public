@@ -17,9 +17,13 @@ from collections import Counter as C
 # Setup the app
 # Make sure not to change this file name or the variable names below,
 # the template is configured to execute 'server' on 'app.py'
-server = flask.Flask(__name__)
-server.secret_key = os.environ.get('secret_key', str(randint(0, 1000000)))
-app = dash.Dash(__name__, server=server)
+# server = flask.Flask(__name__)
+# server.secret_key = os.environ.get('secret_key', str(randint(0, 1000000)))
+# app = dash.Dash(__name__, server=server)
+
+app = dash.Dash(__name__)
+server = app.server
+
 
 # app = dash.Dash()
 # app.scripts.config.serve_locally = True
