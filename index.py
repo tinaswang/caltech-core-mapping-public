@@ -20,10 +20,9 @@ from collections import Counter as C
 server = flask.Flask(__name__)
 server.secret_key = os.environ.get('secret_key', str(randint(0, 1000000)))
 app = dash.Dash(__name__, server=server)
-
+@app.route('/', methods=['GET'])
 
 # app = dash.Dash()
-
 # app.scripts.config.serve_locally = True
 
 vertical = True
@@ -111,7 +110,7 @@ majors = df['option'].unique()
 # all_classes = list(df)
 
 
-
+@app.route('/', methods=['GET'])
 @app.callback(
     dash.dependencies.Output('c-dropdown', 'options'),
     [dash.dependencies.Input('tabs', 'value')])
@@ -144,7 +143,7 @@ def set_class_options(value):
     return [{'label': clean_class[i], 
             'value': class_list[i]} for i in range(len(class_list))]
 
-
+@app.route('/', methods=['GET'])
 @app.callback(
     dash.dependencies.Output('c-dropdown', 'value'),
     [dash.dependencies.Input('c-dropdown', 'options')])
@@ -152,7 +151,7 @@ def set_value(available_options):
     return available_options[0]['value']
 
 
-
+@app.route('/', methods=['GET'])
 @app.callback(Output('tab-output', 'children'), 
     [Input('tabs', 'value'), 
     dash.dependencies.Input('c-dropdown', 'value')])
