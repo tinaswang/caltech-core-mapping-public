@@ -34,14 +34,6 @@ vertical = True
 
 if not vertical:
     app.layout = html.Div([
-        
-         html.Div([
-            html.H1('Caltech Core Mapping'),
-            html.Hr(),
-            html.Div(id='header'),
-            ],
-            style={'width': '80%', 'float': 'right', 'vertical-align': 'top'}
-        ),
 
         dcc.Tabs(
             tabs=[
