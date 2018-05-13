@@ -22,7 +22,7 @@ from collections import Counter as C
 server = flask.Flask(__name__)
 server.secret_key = os.environ.get('secret_key', str(randint(0, 1000000)))
 app = dash.Dash(__name__, server=server)
-
+app.title = "Caltech Core Mapping"
 # app = dash.Dash(__name__)
 # server = app.server
 
@@ -34,11 +34,20 @@ vertical = True
 
 if not vertical:
     app.layout = html.Div([
+        
+         html.Div([
+            html.H1('Caltech Core Mapping'),
+            html.Hr(),
+            html.Div(id='header'),
+            ],
+            style={'width': '80%', 'float': 'right', 'vertical-align': 'top'}
+        ),
+
         dcc.Tabs(
             tabs=[
                 {'label': 'Computer Science', 'value': 1},
                 {'label': 'Mechanical Engineering', 'value': 2},
-                # {'label': 'Physics and Astrophysics', 'value': 3},
+                {'label': 'Physics and Astrophysics', 'value': 3},
                 {'label': 'Electrical Engineering', 'value': 4},
                 {'label': 'Chemistry', 'value': 5},
                 {'label': 'Chemistry Engineering', 'value': 6},
@@ -51,7 +60,17 @@ if not vertical:
             id='tabs',
             vertical=vertical
         ),
-        html.Div(id='tab-output')
+
+
+        html.Div([
+            html.Hr(),
+            html.Div(id='dropdown'),
+            dcc.Dropdown(id='c-dropdown')],
+            style={'width': '80%', 'float': 'right', 'vertical-align': 'top'}
+        ),
+
+        html.Div([
+            html.Hr(), id='tab-output'])
     ], style={
         'width': '80%',
         'fontFamily': 'Sans-Serif',
@@ -66,7 +85,7 @@ else:
                 tabs=[
                 {'label': 'Computer Science', 'value': 1},
                 {'label': 'Mechanical Engineering', 'value': 2},
-                # {'label': 'Physics and Astrophysics', 'value': 3},
+                {'label': 'Physics and Astrophysics', 'value': 3},
                 {'label': 'Electrical Engineering', 'value': 4},
                 {'label': 'Chemistry', 'value': 5},
                 {'label': 'Chemistry Engineering', 'value': 6},
@@ -74,7 +93,7 @@ else:
                 {'label': 'Geological and Planetary Sciences', 'value': 8},
                 # {'label': 'Pseudocore', 'value': 9},
                 ],
-                value=2,
+                value=1,
                 id='tabs',
                 vertical=vertical,
                 style={
