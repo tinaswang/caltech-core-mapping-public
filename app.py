@@ -44,6 +44,7 @@ if not vertical:
                 {'label': 'Chemistry Engineering', 'value': 6},
                 {'label': 'Biology and Bioengineering', 'value': 7},
                 {'label': 'Geological and Planetary Sciences', 'value': 8},
+                {'label': 'Math', 'value': 9},
                 # {'label': 'Pseudocore', 'value': 9},
 
             ],
@@ -79,9 +80,10 @@ else:
                 {'label': 'Physics and Astrophysics', 'value': 3},
                 {'label': 'Electrical Engineering', 'value': 4},
                 {'label': 'Chemistry', 'value': 5},
-                {'label': 'Chemistry Engineering', 'value': 6},
+                {'label': 'Chemical Engineering', 'value': 6},
                 {'label': 'Biology and Bioengineering', 'value': 7},
                 {'label': 'Geological and Planetary Sciences', 'value': 8},
+                {'label': 'Math', 'value': 9},
                 # {'label': 'Pseudocore', 'value': 9},
                 ],
                 value=1,
@@ -137,7 +139,8 @@ def set_class_options(value):
                  5: 'Chemistry',
                 6: 'Chemical Engineering',
                 7: 'Biology',
-                8: 'GPS'}
+                8: 'GPS',
+                9: 'Math'}
     #             # 9: 'pseudo'}
     df_major = df[df['option'] == val_dict[value]]
 
@@ -178,7 +181,8 @@ def display_content(value, selected_class):
                  5: 'Chemistry',
                 6: 'Chemical Engineering',
                 7: 'Biology',
-                8: 'GPS'}
+                8: 'GPS', 
+                9: 'Math'}
     #             # 9: 'pseudo'}
 
 
