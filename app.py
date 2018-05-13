@@ -22,14 +22,13 @@ from collections import Counter as C
 server = flask.Flask(__name__)
 server.secret_key = os.environ.get('secret_key', str(randint(0, 1000000)))
 app = dash.Dash(__name__, server=server)
-# app.title = "Caltech Core Mapping"
-# app = dash.Dash(__name__)
-# server = app.server
 
 
+
+# TO RUN Locally: uncomment the next two lines
 # app = dash.Dash()
 # app.scripts.config.serve_locally = True
-
+app.title = "Caltech Core Mapping"
 vertical = True
 
 if not vertical:
@@ -61,8 +60,8 @@ if not vertical:
             style={'width': '80%', 'float': 'right', 'vertical-align': 'top'}
         ),
 
-        html.Div([
-            html.Hr(), id='tab-output'])
+        html.Div(
+            id='tab-output')
     ], style={
         'width': '80%',
         'fontFamily': 'Sans-Serif',
@@ -259,6 +258,8 @@ def display_content(value, selected_class):
 # Run the Dash app
 if __name__ == '__main__':
     app.server.run(debug=True, threaded=True)
+    # Uncomment to run locally
+    # app.server.run(debug=True)
 
 
 
