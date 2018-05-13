@@ -1,15 +1,30 @@
+# Import required libraries
+import os
+from random import randint
+
+import plotly.plotly as py
+from plotly.graph_objs import *
+
+import flask
 import dash
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State, Event
 import dash_core_components as dcc
 import dash_html_components as html
-from loremipsum import get_sentences
 import pandas as pd
 import re
 from collections import Counter as C
 
-app = dash.Dash()
+# Setup the app
+# Make sure not to change this file name or the variable names below,
+# the template is configured to execute 'server' on 'app.py'
+server = flask.Flask(__name__)
+server.secret_key = os.environ.get('secret_key', str(randint(0, 1000000)))
+app = dash.Dash(__name__, server=server)
 
-app.scripts.config.serve_locally = True
+
+# app = dash.Dash()
+
+# app.scripts.config.serve_locally = True
 
 vertical = True
 
@@ -66,10 +81,22 @@ else:
             ),
             style={'width': '20%', 'float': 'left'}
         ),
-        html.Div(
+            
+
+        html.Div([
+            html.Hr(),
+            html.Div(id='dropdown'),
+            dcc.Dropdown(id='c-dropdown')],
+            style={'width': '80%', 'float': 'right', 'vertical-align': 'top'}
+        ),
+
+        html.Div([
+            html.Hr(),
             html.Div(id='tab-output'),
+            ],
             style={'width': '80%', 'float': 'right'}
-        )
+        ),
+
     ], style={
         'fontFamily': 'Sans-Serif',
         'margin-left': 'auto',
@@ -81,36 +108,14 @@ else:
 df = pd.read_csv('response.csv')
 
 majors = df['option'].unique()
+# all_classes = list(df)
 
-domain = [{'x': [0, 0.18],'y': [0, .19]},
-          {'x': [0, .18],'y': [.21, 0.4]},
-          {'x': [0, .18],'y': [.42, 0.6]},
-          {'x': [0, .18],'y': [.62, 0.8]},
-          {'x': [0, .18],'y': [.82, 1]},
-          {'x': [0.22, 0.4],'y': [0, .19]},
-          {'x': [0.22, .4],'y': [.21, 0.4]},
-          {'x': [0.22, .4],'y': [.42, 0.6]},
-          {'x': [0.22, .4],'y': [.62, 0.8]},
-          {'x': [0.22, .4],'y': [.82, 1]},  
-          {'x': [0.42, 0.6],'y': [0, .19]},
-          {'x': [0.42, .6],'y': [.21, 0.4]},
-          {'x': [0.42, .6],'y': [.42, 0.6]},
-          {'x': [0.42, .6],'y': [.62, 0.8]},
-          {'x': [0.42, .6],'y': [.82, 1]},  
-          {'x': [0.62, 0.8],'y': [0, .19]},
-          {'x': [0.62, .8],'y': [.21, 0.4]},
-          {'x': [0.62, .8],'y': [.42, 0.6]},
-          {'x': [0.62, .8],'y': [.62, 0.8]},
-          {'x': [0.62, .8],'y': [.82, 1]},
-          {'x': [0.82, 1],'y': [0, .19]},
-          {'x': [0.82, 1],'y': [.21, 0.4]},
-          {'x': [0.82, 1],'y': [.42, 0.6]},
-          {'x': [0.82, 1],'y': [.62, 0.8]},
-          {'x': [0.82, 1],'y': [.82, 1]},         
-        ]
 
-@app.callback(Output('tab-output', 'children'), [Input('tabs', 'value')])
-def display_content(value):
+
+@app.callback(
+    dash.dependencies.Output('c-dropdown', 'options'),
+    [dash.dependencies.Input('tabs', 'value')])
+def set_class_options(value):
     val_dict =  {1: 'Computer Science',
                  2: 'Mechanical Engineering',
                  3: 'Physics/Astrophysics',
@@ -120,7 +125,47 @@ def display_content(value):
                 7: 'Biology',
                 8: 'GPS'}
     #             # 9: 'pseudo'}
+    df_major = df[df['option'] == val_dict[value]]
 
+    df_major.drop(df_major.columns[[0, 1, 2]], axis=1, inplace=True)
+
+    df_major = df_major.dropna(axis=1, how='all')
+    class_list = list(df_major)
+    clean_class = []
+
+    for i in range(len(class_list)):
+        curr = class_list[i]
+        if (curr[-2] == "."):
+            print(curr)
+            clean_class.append(curr[:-2])
+        else:
+            clean_class.append(curr)
+
+    return [{'label': clean_class[i], 
+            'value': class_list[i]} for i in range(len(class_list))]
+
+
+@app.callback(
+    dash.dependencies.Output('c-dropdown', 'value'),
+    [dash.dependencies.Input('c-dropdown', 'options')])
+def set_value(available_options):
+    return available_options[0]['value']
+
+
+
+@app.callback(Output('tab-output', 'children'), 
+    [Input('tabs', 'value'), 
+    dash.dependencies.Input('c-dropdown', 'value')])
+def display_content(value, selected_class):
+    val_dict =  {1: 'Computer Science',
+                 2: 'Mechanical Engineering',
+                 3: 'Physics/Astrophysics',
+                 4: 'Electrical Engineering',
+                 5: 'Chemistry',
+                6: 'Chemical Engineering',
+                7: 'Biology',
+                8: 'GPS'}
+    #             # 9: 'pseudo'}
 
 
     df_major = df[df['option'] == val_dict[value]]
@@ -134,49 +179,50 @@ def display_content(value):
     layout_dict = []
     num_classes = len(list(df_major))
 
-    j = 0
-
     classes = list(df_major)
-    for i in classes:
-        cs_class = df_major[i].tolist()
-        cs_class = [x for x in cs_class if str(x) != 'nan']
-        cs_clean = []
-        for word in cs_class:
-            word = re.split(' ,|, | , ', word)
-            cs_clean.extend(word)
+    # for i in classes:
+    cs_class = df_major[selected_class].tolist()
+    cs_class = [x for x in cs_class if str(x) != 'nan']
+    cs_clean = []
+    for word in cs_class:
+        word = re.split(' ,|, | , ', word)
+        cs_clean.extend(word)
 
-        c = C(cs_clean)
-        cs_final = dict(c)
-        cs_df = pd.DataFrame(list(cs_final.items()))
-        cs_df.columns = ["class", "data"]
-        temp_dict = {
+    c = C(cs_clean)
+    cs_final = dict(c)
+    cs_df = pd.DataFrame(list(cs_final.items()))
+    cs_df.columns = ["class", "data"]
+    if (selected_class[-2] == "."):
+        selected_class = selected_class[:-2]
+    temp_dict = {
             "values": cs_df["data"].tolist(),
             "labels": cs_df["class"].tolist(),
-            "domain": domain[j],
+            # "domain": domain[j],
             "hoverinfo":"label+percent",
             'textinfo':'none',
-            'name' : 'i',
+            'name' : selected_class,
             "hole": .4,
             "type": "pie",
 
-            }
+        }
 
-        layout_dict.append(
+
+
+    layout_dict.append(
 
                 {
                 "font": {
-                    "size": 8
+                    "size": 20
                 },
                     "showarrow": False,
-                    "text": i,
-                    "x": ((domain[j]["x"])[1] + (domain[j]["x"])[0])/2 - 0.02,
-                    "y": ((domain[j]["y"])[1] + (domain[j])["y"][0])/2 
+                    "text": selected_class,
+                   
                 }
                 
         )
-        framelist.append(cs_df)
-        data.append(temp_dict)
-        j += 1
+    framelist.append(cs_df)
+    data.append(temp_dict)
+
     
 
 
@@ -187,12 +233,21 @@ def display_content(value):
                 'data': data,
 
                 "layout": {
-                    'showlegend': False,
                     'annotations' : layout_dict,
-                     'height': 800
+                     'height': 600
                     }
 
                })])
 
+
+
+# Run the Dash app
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.server.run(debug=True, threaded=True)
+
+
+
+
+
+
+
