@@ -151,7 +151,7 @@ def set_class_options(value):
 
     if value != 10:
         df_major = df[df['option'] == val_dict[value]]
-
+        # Remove ma 2, ma 3 acm 95ab
         df_major.drop(df_major.columns[[0, 1, 2]], axis=1, inplace=True)
 
         df_major = df_major.dropna(axis=1, how='all')
@@ -313,7 +313,7 @@ def display_content(value, selected_class):
                 "values": cs_df["data"].tolist(),
                 "labels": labels,
                 "hoverinfo":"label+percent",
-                'textinfo':'none',
+                # 'textinfo':'none',
                 'name' : selected_class,
                 "hole": .4,
                 "type": "pie",
