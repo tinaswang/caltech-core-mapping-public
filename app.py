@@ -220,11 +220,15 @@ def display_content(value, selected_class):
                     "ACM 11"
                   ]
             data.append({
+                  #"title":"Global Emissions 1990-2011",
                   "values": [22, 35, 45, 3, 6, 5, 30, 1, 4, 5, 2, 1, 2],
                   "labels": labels,
                   "domain": {"x": [0, 2]},
-                  "name": "Percent of Students",
-                  "hoverinfo":"label+percent+name",
+                  "name": "Number of Students",
+                  "hoverinfo":"label+value+name", # updated to have numbers of students rather than percentages
+                  "textinfo":"value",
+                  #"name": "Percent of Students",
+                  #"hoverinfo":"label+percent+name",
                   "hole": .4,
                   "type": "pie"
                 })
@@ -251,8 +255,11 @@ def display_content(value, selected_class):
               "values": [7, 14, 9, 1, 1, 1, 2, 1, 2, 1, 2, 2, 1],
               "labels": labels,
               "domain": {"x": [0, 2]},
-              "name": "Percent of Students",
-              "hoverinfo":"label+percent+name",
+              "name": "Number of Students",  # updated to have numbers of students rather than percentages
+              "hoverinfo":"label+value+name",
+              "textinfo":"value",
+              #"name": "Percent of Students",
+              #"hoverinfo":"label+percent+name",
               "hole": .4,
               "type": "pie"
             })
@@ -277,8 +284,11 @@ def display_content(value, selected_class):
                   "values": [20, 39, 34, 1, 1, 5, 13, 13, 1, 1, 1],
                   "labels": labels,
                   "domain": {"x": [0, 2]},
-                  "name": "Percent of Students",
-                  "hoverinfo":"label+percent+name",
+                  "name": "Number of Students",  # updated to have numbers of students rather than percentages
+                  "hoverinfo":"label+value+name",
+                  "textinfo":"value",
+                  #"name": "Percent of Students",
+                  #"hoverinfo":"label+percent+name",
                   "hole": .4,
                   "type": "pie"
                 })
@@ -312,8 +322,10 @@ def display_content(value, selected_class):
         temp_dict = {
                 "values": cs_df["data"].tolist(),
                 "labels": labels,
-                "hoverinfo":"label+percent",
+                #"hoverinfo":"label+percent",
                 # 'textinfo':'none',
+                "hoverinfo":"label+value+name",  # updated to have numbers of students rather than percentages
+                "textinfo":"value",
                 'name' : selected_class,
                 "hole": .4,
                 "type": "pie",
@@ -350,8 +362,9 @@ def display_content(value, selected_class):
                 'data': data,
 
                 "layout": {
-                    'annotations' : layout_dict,
-                     'height': 600
+                    'annotations' : layout_dict, # Vibha added a small title
+                     'height': 600,
+                    'title':"For each surveyed class, the donut shows the different classes that certain numbers of students found helpful."
                     }
 
                })])
@@ -363,10 +376,3 @@ if __name__ == '__main__':
     app.server.run(debug=True, threaded=True)
     # Uncomment below to run locally
     # app.server.run(debug=True)
-
-
-
-
-
-
-
