@@ -188,9 +188,11 @@ def set_class_options(value):
 
 
 # Return value of the dropdown
+
 @app.callback(
     dash.dependencies.Output('c-dropdown', 'value'),
     [dash.dependencies.Input('c-dropdown', 'options')])
+@cache.memoize(timeout=TIMEOUT)
 def set_value(available_options):
     return available_options[0]['value']
 
