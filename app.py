@@ -14,6 +14,8 @@ import pandas as pd
 import re
 from collections import Counter as C
 import random
+from flask_caching import Cache
+
 
 # Setup the app
 # Make sure not to change this file name or the variable names below,
@@ -23,6 +25,10 @@ import random
 server = flask.Flask(__name__)
 server.secret_key = os.environ.get('secret_key', str(randint(0, 1000000)))
 app = dash.Dash(__name__, server=server)
+cache = Cache(app.server, config={
+    'CACHE_TYPE': 'filesystem',
+    'CACHE_DIR': 'cache-directory'
+})
 # -----------------------------------------------------
 
 
@@ -32,6 +38,10 @@ app = dash.Dash(__name__, server=server)
 
 app.css.config.serve_locally = True
 app.scripts.config.serve_locally = True
+
+# setting up the cache
+TIMEOUT = 60
+
 
 app.title = "Caltech Core Mapping"
 vertical = True
@@ -128,18 +138,21 @@ else:
         'margin-right': 'auto',
     })
 
+@cache.memoize(timeout=TIMEOUT)
+def query_data():
+    df = pd.read_csv('response.csv')
+    return df
 
 
-df = pd.read_csv('response.csv')
-
-majors = df['option'].unique()
-# all_classes = list(df)
+def dataframe():
+    return query_data()
 
 # Set the value of the dropdown list based on the tab
 @app.callback(
     dash.dependencies.Output('c-dropdown', 'options'),
     [dash.dependencies.Input('tabs', 'value')])
 def set_class_options(value):
+    df = dataframe()
     val_dict =  {1: 'Computer Science',
                  2: 'Mechanical Engineering',
                  3: 'Physics/Astrophysics',
@@ -187,6 +200,7 @@ def set_value(available_options):
     [Input('tabs', 'value'), 
     dash.dependencies.Input('c-dropdown', 'value')])
 def display_content(value, selected_class):
+    df = dataframe()
     val_dict =  {1: 'Computer Science',
                  2: 'Mechanical Engineering',
                  3: 'Physics/Astrophysics',
