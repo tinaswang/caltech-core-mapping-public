@@ -26,10 +26,12 @@ app = dash.Dash(__name__, server=server)
 # -----------------------------------------------------
 
 
-# TO RUN Locally: uncomment the next two lines
+# TO RUN Locally: uncomment the next line
 # app = dash.Dash()
-# app.scripts.config.serve_locally = True
 # -------------------------------------------
+
+app.css.config.serve_locally = True
+app.scripts.config.serve_locally = True
 
 app.title = "Caltech Core Mapping"
 vertical = True
